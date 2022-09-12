@@ -36,17 +36,21 @@ class CanvasAPI:
         self.proxy = proxy
         self.token = token
 
-    def _get_raw(self, full_url):
-        response = requests.get(full_url, **self._get_basic_args())
+    def _get_raw(self, full_url, query_args={}):
+        response = requests.get(full_url, params=query_args, **self._get_basic_args())
         return response
 
     def get(self, url):
         full_url = self.base_url + url
         return self._get_raw(full_url).json()
 
-    def get_pages(self, url):
+    def get_pages(self, url, *, page_size=10):
+        extra_args = {}
+        if page_size:
+            extra_args['per_page'] = page_size
+
         full_url = self.base_url + url
-        response = self._get_raw(full_url)
+        response = self._get_raw(full_url, query_args=extra_args)
         result = response.json()
 
         def has_next_page(response):
