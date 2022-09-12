@@ -12,3 +12,4 @@ class Student:
         new_student = Student(data_dict['id'], data_dict['name'])
         new_student.sections = new_student.sections + data_dict['sections']
         return new_student
+

@@ -1,5 +1,6 @@
 from Project import *
 
+
 class InnovationCourse:
     def __init__(self, course_id, name):
         self.id = course_id

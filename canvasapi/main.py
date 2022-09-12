@@ -1,23 +1,31 @@
 import json
 
+from InnovationCourse import InnovationCourse
+from Student import Student
 from credentials import token
 from CanvasAPI import CanvasAPI
 import re
 
 proxy = 'http://localhost:8888'
 api = CanvasAPI('https://canvas.hu.nl/api/v1/', token, proxy)
-#
-# with open('./../inno-data.json') as f:
-#     print(list(map(lambda p: p['id'], json.load(f)['projects'])))
 
-#
-# inno_sections_raw = api.get_pages('courses/32665/sections')
-#
-# sd_sections = [section for section in inno_sections_raw if re.match("SD", section['name'])]
-# print(sd_sections)
-#
-# inno_enrolments_raw = api.get_pages('courses/32665/enrollments', page_size=50)
-#
-# for inno_enrolment_raw in inno_enrolments_raw:
-#     if "Daan" in inno_enrolment_raw['user']['name']:
-#         print(inno_enrolment_raw)
+with open('./../inno-ids.json') as f:
+    this_year_id = json.load(f)['main']
+    this_year_raw = api.get('courses/32665')
+    this_year = InnovationCourse(this_year_raw['id'], this_year_raw['name'])
+
+
+def get_students_from_course(inno_course, target_section):
+    inno_sections_raw = api.get_pages(f'courses/{inno_course.id}/sections')
+    sd_sections = [section['id'] for section in inno_sections_raw if re.match(target_section, section['name'])]
+    inno_enrolments_raw = api.get_pages(f'courses/{inno_course.id}/enrollments', page_size=100)
+    students = []
+    for inno_enrolment_raw in inno_enrolments_raw:
+        if inno_enrolment_raw['course_section_id'] in sd_sections:
+            student = Student(inno_enrolment_raw['user']['id'], inno_enrolment_raw['user']['name'])
+            students.append(student)
+    return students
+
+
+sd_students = get_students_from_course(this_year, 'SD')
+print(sd_students)
