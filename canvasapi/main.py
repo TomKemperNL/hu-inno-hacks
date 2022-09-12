@@ -1,20 +1,18 @@
 from credentials import token
 from CanvasAPI import CanvasAPI
+import re
 
 proxy = 'http://localhost:8888'
-api = CanvasAPI('https://canvas.hu.nl/api/v1/', token)
+api = CanvasAPI('https://canvas.hu.nl/api/v1/', token, proxy)
 
-# for course in api.get_pages('courses'):
-#   print(course)
+inno_sections_raw = api.get_pages('courses/32665/sections')
+
+sd_sections = [section for section in inno_sections_raw if re.match("SD", section['name'])]
+print(sd_sections)
 
 
-import json
+inno_enrolments_raw = api.get_pages('courses/32665/enrollments?per_page=100')
 
-ids = []
-with open('./../inno-data.json') as f:
-    inno_data = json.load(f)
-    print(inno_data)
-    for p in inno_data['projects']:
-        ids.append(p['id'])
-
-print(ids)
+for inno_enrolment_raw in inno_enrolments_raw:
+    if "Daan" in inno_enrolment_raw['user']['name']:
+        print(inno_enrolment_raw)
