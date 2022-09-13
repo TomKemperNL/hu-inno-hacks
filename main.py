@@ -13,7 +13,8 @@ api = CanvasAPI('https://canvas.hu.nl/api/v1/', token)
 
 
 with open('inno-ids.json') as f:
-    this_year_id = json.load(f)['main']
+    raw = json.load(f)
+    this_year_id = raw['main']
     this_year_raw = api.get(f'courses/{this_year_id}')
     this_year = InnovationCourse(this_year_raw['id'], this_year_raw['name'])
 
@@ -31,5 +32,7 @@ def get_students_from_course(inno_course, target_section):
     return students
 
 
-sd_students = get_students_from_course(this_year, 'SD')
+get_students_cached = cache_list("sd_students.json", Student, get_students_from_course)
+
+sd_students = get_students_cached(this_year, 'SD')
 print(*sd_students)
