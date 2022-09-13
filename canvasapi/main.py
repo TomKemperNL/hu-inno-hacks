@@ -7,7 +7,11 @@ from CanvasAPI import CanvasAPI
 import re
 
 proxy = 'http://localhost:8888'
-api = CanvasAPI('https://canvas.hu.nl/api/v1/', token, proxy)
+api = CanvasAPI('https://canvas.hu.nl/api/v1/', token)
+
+# Ik gebruik op Windows Fiddler als debugger, moet nog even een manier vinden requests beter te debuggen
+# api = CanvasAPI('https://canvas.hu.nl/api/v1/', token, proxy)
+
 
 with open('./../inno-ids.json') as f:
     this_year_id = json.load(f)['main']
