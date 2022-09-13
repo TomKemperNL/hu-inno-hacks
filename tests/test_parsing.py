@@ -1,4 +1,5 @@
-from CanvasAPI import parse_links
+from .context import *
+from canvasapi import parse_links
 
 
 def test_parse_links():

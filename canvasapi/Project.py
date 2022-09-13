@@ -1,4 +1,4 @@
-from Student import *
+from .Student import *
 
 
 class Project:

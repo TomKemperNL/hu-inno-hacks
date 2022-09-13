@@ -1,4 +1,4 @@
-from Project import *
+from .Project import *
 
 
 class InnovationCourse:

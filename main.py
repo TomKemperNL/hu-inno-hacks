@@ -1,9 +1,8 @@
 import json
 
-from InnovationCourse import InnovationCourse
-from Student import Student
+from canvasapi import *
 from credentials import token
-from CanvasAPI import CanvasAPI
+
 import re
 
 proxy = 'http://localhost:8888'
@@ -13,10 +12,11 @@ api = CanvasAPI('https://canvas.hu.nl/api/v1/', token)
 # api = CanvasAPI('https://canvas.hu.nl/api/v1/', token, proxy)
 
 
-with open('./../inno-ids.json') as f:
+with open('inno-ids.json') as f:
     this_year_id = json.load(f)['main']
     this_year_raw = api.get(f'courses/{this_year_id}')
     this_year = InnovationCourse(this_year_raw['id'], this_year_raw['name'])
+
 
 def get_students_from_course(inno_course, target_section):
     inno_sections_raw = api.get_pages(f'courses/{inno_course.id}/sections')
@@ -29,6 +29,7 @@ def get_students_from_course(inno_course, target_section):
             student.sections.append(target_section)
             students.append(student)
     return students
+
 
 sd_students = get_students_from_course(this_year, 'SD')
 print(*sd_students)

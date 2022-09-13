@@ -1,6 +1,5 @@
-from InnovationCourse import *
-from Project import *
-from Student import *
+from .context import *
+from canvasapi import InnovationCourse, Project, Student
 
 
 def test_serialize_json():
