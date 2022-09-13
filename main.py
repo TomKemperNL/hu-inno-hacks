@@ -59,6 +59,29 @@ sd_students = get_students_cached(this_year, 'SD')
 projects = get_inno_projects_cached(project_ids, sd_students)
 
 
+def get_assignment_id_by_name(project, name):
+    assignments_response = api.get_pages(f'courses/{project.id}/assignments')
+    for assignment_response in assignments_response:
+        if assignment_response['name'] == name:
+            return assignment_response['id']
+    return None
 
-print(projects[0].students[1])
 
+def get_grade_student(project, student, aid):
+    submissions_response = api.get_pages(f'courses/{project.id}/assignments/{aid}/submissions')
+    matching_submission = list(filter(lambda s: s['user_id'] == student.id, submissions_response))
+    if len(matching_submission) > 0:
+        if matching_submission[0]['submitted_at'] is not None:
+            return matching_submission[0]['grade']
+        else:
+            return 'Niet ingeleverd'
+    else:
+        return 'Niet aanwezig'
+
+
+for project in projects:
+    print(project.name)
+    aid = get_assignment_id_by_name(project, "Kennis toepassen op HBO-i niveau 2 | Oplevering 1 — Docent")
+    for student in project.students:
+        grade = get_grade_student(project, student, aid)
+        print(f'{student.name} - {grade}')
