@@ -72,16 +72,25 @@ def get_grade_student(project, student, aid):
     matching_submission = list(filter(lambda s: s['user_id'] == student.id, submissions_response))
     if len(matching_submission) > 0:
         if matching_submission[0]['submitted_at'] is not None:
-            return matching_submission[0]['grade']
+            grade = matching_submission[0]['grade']
+            if grade == None:
+                return '!'
+            else:
+                return grade
         else:
-            return 'Niet ingeleverd'
+            return 'X'
     else:
-        return 'Niet aanwezig'
+        return '?'
 
 
 for project in projects:
     print(project.name)
-    aid = get_assignment_id_by_name(project, "Kennis toepassen op HBO-i niveau 2 | Oplevering 1 — Docent")
+
     for student in project.students:
-        grade = get_grade_student(project, student, aid)
-        print(f'{student.name} - {grade}')
+        grades = []
+        for nr in [1, 2]:
+            aid = get_assignment_id_by_name(project, f'Kennis toepassen op HBO-i niveau 2 | Oplevering {nr} — Docent')
+            grade = get_grade_student(project, student, aid)
+            grades.append(grade)
+
+        print(f'{student.name:30} - {grades[0]:15} - {grades[1]:15}')
