@@ -22,7 +22,10 @@ with open('inno-ids.json') as f:
 holistiq = HolisticAPI(api, this_year, "SD")
 holistiq.init()  # TODO: uitzoeken hoe dit netter kan, zo'n magische method call is niks natuurlijk
 
-# for project in holistiq.projects:
-#     holistiq.get_grades_in_project(project)
+for project in holistiq.projects:
+    holistiq.get_grades_in_project(project)
 
-# holistiq.get_grades_in_project(holistiq.get_project(410))
+#holistiq.get_grades_in_project(holistiq.get_project(410))
+
+for todo in holistiq.todos:
+    print(todo)

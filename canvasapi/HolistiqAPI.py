@@ -13,6 +13,7 @@ class HolisticAPI:
         self.programme = programme
         self.projects = []
         self.students = []
+        self.todos = []  # hackey hackmans!
 
     def init(self):
         def get_students_from_course(inno_course, target_section):
@@ -84,6 +85,10 @@ class HolisticAPI:
                 if matching_submission[0]['submitted_at'] is not None:
                     grade = matching_submission[0]['grade']
                     if grade == None:
+
+                        self.todos.append(
+                            f'https://canvas.hu.nl/courses/{project.id}/gradebook/speed_grader?assignment_id={aid}&student_id={student.id}')
+
                         return '!'
                     else:
                         return grade
