@@ -24,8 +24,5 @@ holistiq.init()  # TODO: uitzoeken hoe dit netter kan, zo'n magische method call
 
 # for project in holistiq.projects:
 #     holistiq.get_grades_in_project(project)
-#
-# print()
-#
-#
-holistiq.get_grades_in_project(holistiq.get_project(385))
+
+# holistiq.get_grades_in_project(holistiq.get_project(410))

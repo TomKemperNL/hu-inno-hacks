@@ -69,12 +69,13 @@ class HolisticAPI:
             cached_wrapper = cache_list(f'assignments_{pjt.id}.json', Assignment, get_assignments_from_project)
             return cached_wrapper(pjt)
 
-        def get_assignment_id_by_name(project, name):
+        def get_assignment_ids_by_name(project, name):
             assignments = cached_get_assignments_from_project(project)
+            ids = []
             for assignment in assignments:
                 if assignment.name == name:
-                    return assignment.id
-            return None
+                    ids.append(assignment.id)
+            return ids
 
         def get_grade_student(project, student, aid):
             submissions_response = self.canvas_api.get_pages(f'courses/{project.id}/assignments/{aid}/submissions')
@@ -92,14 +93,19 @@ class HolisticAPI:
                 return '?'
 
         for student in project.students:
-            grades = []
+            grades = {}
             for nr in [1, 2, 3, 4]:
-                aid = get_assignment_id_by_name(project,
-                                                f'Kennis toepassen op HBO-i niveau 2 | Oplevering {nr} — Docent')
-                if aid is not None:
-                    grade = get_grade_student(project, student, aid)
-                    grades.append(grade)
+                assignment_ids = get_assignment_ids_by_name(project,
+                                                            f'Kennis toepassen op HBO-i niveau 2 | Oplevering {nr} — Docent')
+                for aid in assignment_ids:
+                    if aid is not None:
+                        grade = get_grade_student(project, student, aid)
+                        if nr in grades.keys():
+                            if grade not in ['!', 'X', '?']:
+                                grades[nr] = grade
+                        else:
+                            grades[nr] = grade
 
-            grades_padded = list(map(lambda s: f'{s:15}', grades))
+            grades_padded = list(map(lambda s: f'{s:15}', grades.values()))
 
             print(f'{student.name:30} - {"-".join(grades_padded)}')
