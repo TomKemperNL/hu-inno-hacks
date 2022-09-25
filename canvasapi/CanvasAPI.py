@@ -26,7 +26,7 @@ class CanvasAPI:
     def _get_basic_args(self):
         args = {'auth': bearer_auth(self.token)}
         if self.proxy is not None:
-            args['proxies'] = {'http': 'http://localhost:8888', 'https': 'http://localhost:8888'}
+            args['proxies'] = {'http': self.proxy, 'https': self.proxy}
             args['verify'] = False
 
         return args

@@ -19,3 +19,4 @@ class Project:
         new_project = Project(data_dict['id'], data_dict['name'])
         new_project.students = list(map(lambda s: Student.from_dict(s), data_dict['students']))
         return new_project
+
