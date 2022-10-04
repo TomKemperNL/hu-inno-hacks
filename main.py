@@ -6,7 +6,7 @@ from credentials import token
 import re
 
 proxy = 'http://localhost:8888'
-api = CanvasAPI('https://canvas.hu.nl/api/v1/', token)
+api = CanvasAPI('https://canvas.hu.nl/', token)
 
 # Ik gebruik op Windows Fiddler als debugger, moet nog even een manier vinden requests beter te debuggen
 # api = CanvasAPI('https://canvas.hu.nl/api/v1/', token, proxy)

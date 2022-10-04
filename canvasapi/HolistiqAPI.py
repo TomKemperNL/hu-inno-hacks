@@ -116,7 +116,7 @@ class HolisticAPI:
                                     'project': project.name,
                                     'student': student.name,
                                     'assignment': assignment_name,
-                                    'link': self.canvas_api.create_url(
+                                    'link': self.canvas_api.create_client_url(
                                         f'/courses/{project.id}/gradebook/speed_grader?assignment_id={aid}&student_id={student.id}')
                                 })
 

@@ -32,7 +32,8 @@ class CanvasAPI:
         return args
 
     def __init__(self, base_url, token, proxy=None):
-        self.base_url = base_url
+        self.base_url = base_url + 'api/v1/'
+        self.bare_url = base_url
         self.proxy = proxy
         self.token = token
 
@@ -44,8 +45,11 @@ class CanvasAPI:
         full_url = self.base_url + url
         return self._get_raw(full_url).json()
 
-    def create_url(self, relative_url):
+    def create_api_url(self, relative_url):
         return self.base_url + relative_url
+
+    def create_client_url(self, relative_url):
+        return self.bare_url + relative_url
 
     def get_pages(self, url, *, page_size=10):
         extra_args = {}
