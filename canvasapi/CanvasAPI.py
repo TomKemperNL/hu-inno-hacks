@@ -44,6 +44,9 @@ class CanvasAPI:
         full_url = self.base_url + url
         return self._get_raw(full_url).json()
 
+    def create_url(self, relative_url):
+        return self.base_url + relative_url
+
     def get_pages(self, url, *, page_size=10):
         extra_args = {}
         if page_size:

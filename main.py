@@ -20,12 +20,23 @@ with open('inno-ids.json') as f:
     this_year = InnovationCourse(this_year_raw['id'], this_year_raw['name'])
 
 holistiq = HolisticAPI(api, this_year, "SD")
-holistiq.init()  # TODO: uitzoeken hoe dit netter kan, zo'n magische method call is niks natuurlijk
+holistiq.init(project_ids)  # TODO: uitzoeken hoe dit netter kan, zo'n magische method call is niks natuurlijk
 
+all_todos = []
 for project in holistiq.projects:
-    holistiq.get_grades_in_project(project)
+    (grades_per_student, todos) = holistiq.get_grades_in_project(project, [
+        'Kennis toepassen op HBO-i niveau 2',
+        'Nieuwe competenties op HBO-i niveau 3',
+        'Gedreven ontwerpen',
+        'Gedistribueerde systemen'
+    ])
+    all_todos = all_todos + todos
 
-#holistiq.get_grades_in_project(holistiq.get_project(410))
+    print(project.name)
+    for student in grades_per_student.keys():
+        print('\t' + student)
+        for assignment in grades_per_student[student].keys():
+            print(f'\t\t{assignment}: {grades_per_student[student][assignment]}')
 
-for todo in holistiq.todos:
+for todo in all_todos:
     print(todo)
