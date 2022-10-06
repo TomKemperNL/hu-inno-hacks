@@ -1,9 +1,11 @@
 import json
 
 from canvasapi import *
+from canvasapi.HolistiqAPI import ApplicationMode
 from credentials import token
 
-import re
+
+mode = ApplicationMode.TEACHER_ASSISTANT
 
 proxy = 'http://localhost:8888'
 api = CanvasAPI('https://canvas.hu.nl/', token)
@@ -19,7 +21,7 @@ with open('inno-ids.json') as f:
     this_year_raw = api.get(f'courses/{this_year_id}')
     this_year = InnovationCourse(this_year_raw['id'], this_year_raw['name'])
 
-holistiq = HolisticAPI(api, this_year, "SD")
+holistiq = HolisticAPI(api, this_year, "SD", mode)
 holistiq.init(project_ids)  # TODO: uitzoeken hoe dit netter kan, zo'n magische method call is niks natuurlijk
 
 all_todos = []
@@ -38,5 +40,6 @@ for project in holistiq.projects:
         for assignment in grades_per_student[student].keys():
             print(f'\t\t{assignment}: {grades_per_student[student][assignment]}')
 
+print("=============TODO's=============")
 for todo in all_todos:
     print(todo)

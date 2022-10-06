@@ -4,13 +4,20 @@ from .Student import Student
 from .Project import Project
 from .Caching import cache_list
 from .Assignment import Assignment
+from enum import Enum
+
+
+class ApplicationMode(Enum):
+    TEACHER = 0
+    TEACHER_ASSISTANT = 1
 
 
 class HolisticAPI:
-    def __init__(self, canvas_api, inno_course, programme):
+    def __init__(self, canvas_api, inno_course, programme, mode):
         self.canvas_api = canvas_api
         self.innovation_course = inno_course
         self.programme = programme
+        self.mode = mode
         self.projects = []
         self.students = []
 
@@ -34,15 +41,30 @@ class HolisticAPI:
             for course_id in ids:
                 course_response = self.canvas_api.get_pages(f'courses/{course_id}')
                 course = Project(course_response['id'], course_response['name'])
-                enrollments = self.canvas_api.get_pages(f'courses/{course_id}/enrollments')
-                for enrollment_resp in enrollments:
-                    if enrollment_resp['type'] == "StudentEnrollment":
-                        matching_students = list(filter(lambda s: s.id == enrollment_resp['user']['id'], all_students))
-                        if len(matching_students) == 1:
-                            course.students.append(matching_students[0])
 
-                courses.append(course)
+                if self.mode == ApplicationMode.TEACHER_ASSISTANT:
+                    courses.append(get_users_as_teacher_assistant(course_id, course, all_students))
+                elif self.mode == ApplicationMode.TEACHER:
+                    courses.append(get_users_as_teacher(course_id, course, all_students))
             return courses
+
+        def get_users_as_teacher_assistant(course_id, course, all_students):
+            users = self.canvas_api.get(f'courses/{course_id}/users?enrollment_type%5B%5D=student') #Query param to only get Student users
+            if type(users) == list:
+                for user in users:
+                    matching_students = list(filter(lambda s: s.id == user['id'], all_students))
+                    if len(matching_students) == 1:
+                        course.students.append(matching_students[0])
+            return course
+
+        def get_users_as_teacher(course_id, course, all_students):
+            enrollments = self.canvas_api.get_pages(f'courses/{course_id}/enrollments')
+            for enrollment_resp in enrollments:
+                if enrollment_resp['type'] == "StudentEnrollment":
+                    matching_students = list(filter(lambda s: s.id == enrollment_resp['user']['id'], all_students))
+                    if len(matching_students) == 1:
+                        course.students.append(matching_students[0])
+            return course
 
         get_inno_projects_cached = cache_list("all_projects.json", Project, get_inno_projects)
 
@@ -88,7 +110,7 @@ class HolisticAPI:
             if len(matching_submission) > 0:
                 if matching_submission[0]['submitted_at'] is not None:
                     grade = matching_submission[0]['grade']
-                    if grade == None:
+                    if grade is None:
                         return '!'
                     else:
                         return grade
@@ -106,8 +128,7 @@ class HolisticAPI:
                 result[student.name][name] = grades
                 for nr in range(1, 10):
                     assignment_name = f'{name} | Oplevering {nr} — Docent'
-                    assignment_ids = get_assignment_ids_by_name(project,
-                                                                assignment_name)
+                    assignment_ids = get_assignment_ids_by_name(project, assignment_name)
                     for aid in assignment_ids:
                         if aid is not None:
                             grade = get_grade_student(project, student, aid)
