@@ -32,7 +32,7 @@ class HolisticAPI:
         def get_inno_projects(ids, all_students):
             courses = []
             for course_id in ids:
-                course_response = self.canvas_api.get_pages(f'courses/{course_id}')
+                course_response = self.canvas_api.get_pages(f'courses/{course_id}', page_size=100)
                 course = Project(course_response['id'], course_response['name'])
                 enrollments = self.canvas_api.get_pages(f'courses/{course_id}/enrollments')
                 for enrollment_resp in enrollments:
@@ -58,7 +58,7 @@ class HolisticAPI:
     def get_grades_in_project(self, project, assignment_names):
 
         def get_assignments_from_project(pjt):
-            assignments_response = self.canvas_api.get_pages(f'courses/{pjt.id}/assignments')
+            assignments_response = self.canvas_api.get_pages(f'courses/{pjt.id}/assignments', page_size=100)
             assignments = list(map(lambda a: Assignment.from_dict(a), assignments_response))
             return assignments
 
@@ -80,7 +80,7 @@ class HolisticAPI:
             key = f'{project.id}-{aid}'
             if key not in in_memory_submissions_cache.keys():
                 in_memory_submissions_cache[key] = self.canvas_api.get_pages(
-                    f'courses/{project.id}/assignments/{aid}/submissions')
+                    f'courses/{project.id}/assignments/{aid}/submissions', page_size=100)
 
             submissions_response = in_memory_submissions_cache[key]
 
