@@ -27,7 +27,7 @@ class HolisticAPI:
                     students.append(student)
             return students
 
-        get_students_cached = cache_list("sd_students.json", Student, get_students_from_course)
+        get_students_cached = cache_list("./cache/sd_students.json", Student, get_students_from_course)
 
         def get_inno_projects(ids, all_students):
             courses = []
@@ -44,7 +44,7 @@ class HolisticAPI:
                 courses.append(course)
             return courses
 
-        get_inno_projects_cached = cache_list("all_projects.json", Project, get_inno_projects)
+        get_inno_projects_cached = cache_list("./cache/all_projects.json", Project, get_inno_projects)
 
         self.students = get_students_cached(self.innovation_course, 'SD')
         self.projects = get_inno_projects_cached(project_ids, self.students)
@@ -63,7 +63,7 @@ class HolisticAPI:
             return assignments
 
         def cached_get_assignments_from_project(pjt):
-            cached_wrapper = cache_list(f'assignments_{pjt.id}.json', Assignment, get_assignments_from_project)
+            cached_wrapper = cache_list(f'./cache/assignments_{pjt.id}.json', Assignment, get_assignments_from_project)
             return cached_wrapper(pjt)
 
         def get_assignment_ids_by_name(project, name):
@@ -117,7 +117,7 @@ class HolisticAPI:
                                     'student': student.name,
                                     'assignment': assignment_name,
                                     'link': self.canvas_api.create_client_url(
-                                        f'/courses/{project.id}/gradebook/speed_grader?assignment_id={aid}&student_id={student.id}')
+                                        f'courses/{project.id}/gradebook/speed_grader?assignment_id={aid}&student_id={student.id}')
                                 })
 
                             if nr in grades.keys():
