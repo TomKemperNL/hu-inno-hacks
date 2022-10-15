@@ -36,7 +36,13 @@ for project in holistiq.projects:
     for student in grades_per_student.keys():
         print('\t' + student)
         for assignment in grades_per_student[student].keys():
-            print(f'\t\t{assignment}: {grades_per_student[student][assignment]}')
+            submissions = grades_per_student[student][assignment]
+
+            grades = []
+            if submissions is not None and len(submissions) > 0:
+                grades = list(map(lambda s: s.grade, submissions.values()))
+
+            print(f'\t\t{assignment}: {", ".join(grades)}')
 
 for todo in all_todos:
     print(todo)
