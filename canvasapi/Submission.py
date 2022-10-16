@@ -1,5 +1,5 @@
 from .Student import *
-
+import datetime
 
 class Submission:
     def __init__(self, assignment_id, attempt, submitted_at, grade=None, rubric=None):
@@ -8,7 +8,7 @@ class Submission:
 
         self.assignment_id = assignment_id
         self.attempt = attempt
-        self.submitted_at = submitted_at
+        self.submitted_at = datetime.datetime.strptime(submitted_at, '%Y-%m-%dT%H:%M:%SZ')
         self.grade = grade
         if self.grade is None:
             self.grade = '!'

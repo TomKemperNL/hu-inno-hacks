@@ -2,6 +2,7 @@ import json
 
 from canvasapi import *
 from credentials import token
+import datetime
 
 import re
 
@@ -35,14 +36,23 @@ for project in holistiq.projects:
     print(project.name)
     for student in grades_per_student.keys():
         print('\t' + student)
+        total_submissions = 0
+        last_submission = None
         for assignment in grades_per_student[student].keys():
             submissions = grades_per_student[student][assignment]
+            total_submissions += len(submissions.values())
 
             grades = []
             if submissions is not None and len(submissions) > 0:
+                last = max(map(lambda s: s.submitted_at, submissions.values()))
                 grades = list(map(lambda s: s.grade, submissions.values()))
+                last_submission = last if last_submission is None else max([last_submission, last])
 
             print(f'\t\t{assignment}: {", ".join(grades)}')
+        print('')
+        print(f'\t\tAantal opleveringen: {total_submissions}')
+        last_formatted = "-" if last_submission is None else last_submission.strftime("%d %b")
+        print(f'\t\tLaatste opleveringen: {last_formatted}')
 
 for todo in all_todos:
     print(todo)
