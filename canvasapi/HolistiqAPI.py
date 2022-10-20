@@ -47,7 +47,7 @@ class HolisticAPI:
 
         get_inno_projects_cached = cache_list("./cache/all_projects.json", Project, get_inno_projects)
 
-        self.students = get_students_cached(self.innovation_course, 'SD')
+        self.students = get_students_cached(self.innovation_course, 'BIM')
         self.projects = get_inno_projects_cached(project_ids, self.students)
 
     def get_project(self, name):
