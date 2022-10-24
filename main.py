@@ -42,13 +42,21 @@ for project in holistiq.projects:
             submissions = grades_per_student[student][assignment]
             total_submissions += len(submissions.values())
 
-            grades = []
+            grades_per_criteria = {}
             if submissions is not None and len(submissions) > 0:
-                last = max(map(lambda s: s.submitted_at, submissions.values()))
-                grades = list(map(lambda s: s.grade, submissions.values()))
-                last_submission = last if last_submission is None else max([last_submission, last])
+                for submission in submissions.values():
+                    for (key, graded_criterion) in submission.rubric.items():
+                        if key not in grades_per_criteria.keys():
+                            grades_per_criteria[key] = []
 
-            print(f'\t\t{assignment}: {", ".join(grades)}')
+                        if 'points' in graded_criterion.keys():
+                            grades_per_criteria[key].append(graded_criterion['points'])
+                    last = max(map(lambda s: s.submitted_at, submissions.values()))
+                    last_submission = last if last_submission is None else max([last_submission, last])
+
+            print(f'\t\t{assignment}: ')
+            for (criterion, grades) in grades_per_criteria.items():
+                print(f'\t\t\t{criterion:135}: {", ".join(list(map(str, grades)))}')
         print('')
         print(f'\t\tAantal opleveringen: {total_submissions}')
         last_formatted = "-" if last_submission is None else last_submission.strftime("%d %b")

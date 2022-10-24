@@ -5,6 +5,7 @@ from .Project import Project
 from .Caching import cache_list
 from .Assignment import Assignment
 from .Submission import Submission
+from .Rubric import Rubric
 
 
 class HolisticAPI:
@@ -67,6 +68,15 @@ class HolisticAPI:
             cached_wrapper = cache_list(f'./cache/assignments_{pjt.id}.json', Assignment, get_assignments_from_project)
             return cached_wrapper(pjt)
 
+        def get_rubrics_from_project(pjt):
+            rubrics_response = self.canvas_api.get_pages(f'courses/{pjt.id}/rubrics', page_size=100)
+            rubrics = list(map(lambda r: Rubric.from_dict(r), rubrics_response))
+            return rubrics
+
+        def cached_get_rubrics_from_project(pjt):
+            cached_wrapper = cache_list(f'./cache/rubrics_{pjt.id}.json', Rubric, get_rubrics_from_project)
+            return cached_wrapper(pjt)
+
         def get_assignment_ids_by_name(project, name):
             assignments = cached_get_assignments_from_project(project)
             ids = []
@@ -76,6 +86,7 @@ class HolisticAPI:
             return ids
 
         in_memory_submissions_cache = {}
+        rubrics = cached_get_rubrics_from_project(project)
 
         def get_submission_student(project, student, aid):
             key = f'{project.id}-{aid}'
@@ -117,7 +128,9 @@ class HolisticAPI:
 
                                 if nr in submissions.keys():
                                     if sub.grade != '!':
+                                        sub.fix_rubrics(rubrics)
                                         submissions[nr] = sub
                                 else:
+                                    sub.fix_rubrics(rubrics)
                                     submissions[nr] = sub
         return result, todos

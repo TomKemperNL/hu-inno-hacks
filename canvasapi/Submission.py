@@ -1,5 +1,7 @@
 from .Student import *
 import datetime
+from .Criterion import Criterion
+
 
 class Submission:
     def __init__(self, assignment_id, attempt, submitted_at, grade=None, rubric=None):
@@ -20,8 +22,18 @@ class Submission:
             'attempt': self.id,
             'submitted_at': self.submitted_at,
             'grade': self.grade
-            #todo, dicts naar json? zou makkelijk moeten zijn...
+            # todo, dicts naar json? zou makkelijk moeten zijn...
         }
+
+    def fix_rubrics(self, rubric_list):
+        old_rubric = self.rubric
+        self.rubric = {}
+        for k in old_rubric.keys():
+            key = Criterion.fix_id(k)
+            for rubric in rubric_list:
+                matching_criteria = list(filter(lambda r: r.id == key, rubric.criteria))
+                if len(matching_criteria) > 0:
+                    self.rubric[matching_criteria[0].name] = old_rubric[k]
 
     @staticmethod
     def from_dict(data_dict):
